@@ -18,11 +18,15 @@ class OMOK {
 protected:
     int m_col, m_row, m_x, m_y, m_color;
     string m_symbol = "┼";
-    string m_StoneColor = "●";
+    string m_StoneColor;
+    string m_BlackStone = "●";
+    string m_WhiteStone = "○";
     string Board[11][21];
 public:
     OMOK();
+    ~OMOK();
     void StoneSet(int const&);
+    void PositionSet(const int&, const int&);
     void DrawBoard();
     void RefreshBoard(const int&, const int&);
     bool IsPlaced(const int&, const int&);
@@ -32,10 +36,16 @@ public:
 };
 
 OMOK::OMOK() : m_col(21), m_row(11), m_x(0), m_y(0), m_color(1) {}
+OMOK::~OMOK() {}
 
 void OMOK::StoneSet(int const &color) {
-    if(color == 1) m_StoneColor = "●";
-    else m_StoneColor = "○";
+    if(color == White) m_StoneColor = m_WhiteStone;
+    else m_StoneColor = m_BlackStone;
+}
+
+void OMOK::PositionSet(const int &x, const int &y) {
+    m_x = x;
+    m_y = m_row - (y + 2);
 }
 
 void OMOK::DrawBoard() {
@@ -93,7 +103,6 @@ void OMOK::DrawBoard() {
         }
         cout << endl;
     }
-
 }
 
 void OMOK::RefreshBoard(const int &x, const int &y) {
@@ -101,8 +110,7 @@ void OMOK::RefreshBoard(const int &x, const int &y) {
         //9,0 -> 9,9
         //0,9 -> 0,0
         //9,9 -> 9,0
-    m_x = x;
-    m_y = m_row - (y + 2);
+    PositionSet(x, y);
     
     for(int i(0); i < m_row; i++) {
         for(int j(0); j < m_col; j++) {
@@ -115,7 +123,9 @@ void OMOK::RefreshBoard(const int &x, const int &y) {
 }
 
 bool OMOK::IsPlaced(const int &x, const int &y) {
-    if(Board[x][y] == m_StoneColor) return true;
+    //RefreshBoard 에서 위치조정을 해줬으니까, 여기서도 위치조정을 해서 놓여있는지 유무를 찾아야한다.
+    PositionSet(x, y);
+    if(Board[m_y][m_x + 1] == m_WhiteStone || Board[m_y][m_x + 1] == m_BlackStone) return true;
     else return false;
 }
 
@@ -128,11 +138,11 @@ bool OMOK::WhoIsTurn(int const &color) {
 void OMOK::ChangeTurn(int &turn) {
     if(turn == White) {
         turn += 1;
-        m_StoneColor = "○";
+        m_StoneColor = m_BlackStone;
     }
     else {
         turn -= 1;
-        m_StoneColor = "●";
+        m_StoneColor = m_WhiteStone;
     }
 }
 
@@ -142,26 +152,90 @@ color OMOK::WhoIsWinner() {
     for(int i(0); i < m_row; i++) {
         for(int j(0); j < m_col; j++) {
             //돌을 발견한 순간을 시작점으로 잡는다.
-            if(Board[i][j] == m_StoneColor) {
+            if(Board[i][j] == m_BlackStone || Board[i][j] == m_WhiteStone) {
                 //해당 돌 색깔을 기준으로 잡고
                 string ThisStone = Board[i][j];
                 //기준돌 이하로 쭈욱 스캔
-
+                int ti(i), tj(j);
                 //기준돌 이후로 같은 돌이 놓여있을 경우
-                //이상한 에러남 수정하기
-                if(ThisStone == Board[i + 1][j] && ThisStone == Board[i + 2][j] && ThisStone == Board[i + 3][j] && ThisStone == Board[i + 4][j]) {
-                    check++;
+                //가로
+                while(tj < j + 5 && j + 5 < m_col) {
+                    if(ThisStone == Board[ti][tj]) {
+                        tj++;
+                        check++;
+                    }
+                    else {
+                        tj = j;
+                        check = 0;
+                        break;
+                    }
                 }
-                else if(ThisStone == Board[i][j + 1] && ThisStone == Board[i][j + 2] && ThisStone == Board[i][j + 3] && ThisStone == Board[i][j + 4]) {
-                    check++;
+                //세로
+                while(ti < i + 5 && i + 5 < m_row) {
+                    if(ThisStone == Board[ti][tj]) {
+                        ti++;
+                        check++;
+                    }
+                    else {
+                        ti = i;
+                        check = 0;
+                        break;
+                    }
                 }
-                else if(ThisStone == Board[i + 1][j + 1] && ThisStone == Board[i + 2][j + 2] && ThisStone == Board[i + 3][j + 3] && ThisStone == Board[i + 4][j + 4]) {
-                    check++;
+                //대각선 북서방향(2사분면)
+                while(ti < i + 5 && tj > j - 5 && i + 5 < m_row && j - 5 < m_col) {
+                    if(ThisStone == Board[ti][tj]) {
+                        ti++;
+                        tj--;
+                        check++;
+                    }
+                    else {
+                        ti = i;
+                        tj = j;
+                        check = 0;
+                        break;
+                    }
                 }
-                else if(ThisStone == Board[i - 1][j - 1] && ThisStone == Board[i - 2][j - 2] && ThisStone == Board[i - 3][j - 3] && ThisStone == Board[i - 4][j - 4]) {
-                    check++;
+                //대각선 북동방향(1사)
+                while(ti < i + 5 && tj < j + 5 && i + 5 < m_row && j + 5 < m_col) {
+                    if(ThisStone == Board[ti][tj]) {
+                        ti++;
+                        tj++;
+                        check++;
+                    }
+                    else {
+                        ti = i;
+                        tj = j;
+                        check = 0;
+                        break;
+                    }
                 }
-                
+                //대각선 남동방향(4사)
+                while(ti > i - 5 && tj < j + 5 && i - 5 < m_row && j + 5 < m_col) {
+                    if(ThisStone == Board[ti][tj]) {
+                        ti--;
+                        tj++;
+                        check++;
+                    }
+                    else {
+                        ti = i;
+                        tj = j;
+                        check = 0;
+                        break;
+                    }
+                }
+                //대각선 남서방향(3사)
+                while(ti > i - 5 && tj > j - 5 && i - 5 < m_row && j - 5 && m_col) {
+                    if(ThisStone == Board[ti][tj]) {
+                        ti--;
+                        tj--;
+                        check++;
+                    }
+                    else {
+                        check = 0;
+                        break;
+                    }
+                }
                 
                 if(check == 5) {
                     if(WhoIsTurn(m_color)) return White;
@@ -194,8 +268,8 @@ int main() {
         }
         else {
             cout << endl << "돌 색상을 선택해주세요." << endl;
-            cout << "1. 백돌(●)" << endl;
-            cout << "2. 흑돌(○)" << endl;
+            cout << "1. 백돌(○)" << endl;
+            cout << "2. 흑돌(●)" << endl;
             cout << "돌 선택 : ";
             cin >> color;
             if(color == White) {
@@ -213,15 +287,19 @@ int main() {
         }
         
         while(myOmok.WhoIsWinner() == Empty) {
-            if(myOmok.WhoIsTurn(color)) {
+            if(myOmok.WhoIsTurn(color) == true) {
                 cout << "백돌의 순서입니다. 놓을 위치(x, y) : ";
             }
             else {
                 cout << "흑돌의 순서입니다. 놓을 위치(x, y) : ";
             }
             cin >> x >> y;
-            if((x > 20 || y > 10) || myOmok.IsPlaced(x, y)) {
+            if((x > 20 || y > 10) || x < 0 || y < 0) {
                 cout << "돌을 잘못 두셨습니다. 다시 놓아주세요." << endl;
+                continue;
+            }
+            if(myOmok.IsPlaced(x, y)) {
+                cout << endl << "돌이 이미 놓여져 있습니다. 다시 놓아주세요." << endl;
                 continue;
             }
             cout << endl;
