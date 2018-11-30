@@ -3,7 +3,7 @@
 //  Omok(C++)
 //
 //  Created by 조성진 on 17/11/2018.
-//  Recently updated on 25/11/2018.
+//  Recently updated on 30/11/2018.
 //  Copyright © 2018 조성진. All rights reserved.
 //
 
@@ -25,14 +25,14 @@ protected:
 public:
     OMOK();
     ~OMOK();
-    void StoneSet(int const&);
-    void PositionSet(const int&, const int&);
-    void DrawBoard();
-    void RefreshBoard(const int&, const int&);
-    bool IsPlaced(const int&, const int&);
-    bool WhoIsTurn(int const&);
-    void ChangeTurn(int&);
-    color WhoIsWinner();
+    void StoneSet(int const&);                  //돌 색깔 지정
+    void PositionSet(const int&, const int&);   //입력한 좌표를 그림상 좌표로 보정해줌
+    void DrawBoard();                           //바둑판 세팅
+    void RefreshBoard(const int&, const int&);  //돌을 둘 때마다 판을 새로고침시킴
+    bool IsPlaced(const int&, const int&);      //돌이 놓여있는지 확인해줌
+    bool WhoIsTurn(int const&);                 //누구 차례인지 확인해줌
+    void ChangeTurn(int&);                      //순서를 바꿔줌
+    color WhoIsWinner();                        //누가 이겼는지 판별해줌
 };
 
 OMOK::OMOK() : m_col(21), m_row(11), m_x(0), m_y(0), m_color(1) {}
@@ -149,16 +149,17 @@ void OMOK::ChangeTurn(int &turn) {
 color OMOK::WhoIsWinner() {
     int check(0);
     
-    for(int i(0); i < m_row; i++) {
-        for(int j(0); j < m_col; j++) {
+    for(int i(0); i < m_row - 1; i++) {
+        for(int j(1); j < m_col; j++) {
             //돌을 발견한 순간을 시작점으로 잡는다.
             if(Board[i][j] == m_BlackStone || Board[i][j] == m_WhiteStone) {
                 //해당 돌 색깔을 기준으로 잡고
                 string ThisStone = Board[i][j];
+                cout << ThisStone << " 색의 돌이 놓여있습니다. 돌의 좌표는 " << i << ", " << j << endl;
                 //기준돌 이하로 쭈욱 스캔
                 int ti(i), tj(j);
                 //기준돌 이후로 같은 돌이 놓여있을 경우
-                //가로
+                //가로 --- 이상 무
                 while(tj < j + 5 && j + 5 < m_col) {
                     if(ThisStone == Board[ti][tj]) {
                         tj++;
@@ -170,7 +171,7 @@ color OMOK::WhoIsWinner() {
                         break;
                     }
                 }
-                //세로
+                //세로 --- 이상 무
                 while(ti < i + 5 && i + 5 < m_row) {
                     if(ThisStone == Board[ti][tj]) {
                         ti++;
@@ -182,21 +183,7 @@ color OMOK::WhoIsWinner() {
                         break;
                     }
                 }
-                //대각선 북서방향(2사분면)
-                while(ti < i + 5 && tj > j - 5 && i + 5 < m_row && j - 5 < m_col) {
-                    if(ThisStone == Board[ti][tj]) {
-                        ti++;
-                        tj--;
-                        check++;
-                    }
-                    else {
-                        ti = i;
-                        tj = j;
-                        check = 0;
-                        break;
-                    }
-                }
-                //대각선 북동방향(1사)
+                //대각선 남동방향(4사)
                 while(ti < i + 5 && tj < j + 5 && i + 5 < m_row && j + 5 < m_col) {
                     if(ThisStone == Board[ti][tj]) {
                         ti++;
@@ -210,24 +197,10 @@ color OMOK::WhoIsWinner() {
                         break;
                     }
                 }
-                //대각선 남동방향(4사)
-                while(ti > i - 5 && tj < j + 5 && i - 5 < m_row && j + 5 < m_col) {
-                    if(ThisStone == Board[ti][tj]) {
-                        ti--;
-                        tj++;
-                        check++;
-                    }
-                    else {
-                        ti = i;
-                        tj = j;
-                        check = 0;
-                        break;
-                    }
-                }
                 //대각선 남서방향(3사)
-                while(ti > i - 5 && tj > j - 5 && i - 5 < m_row && j - 5 && m_col) {
+                while(ti < i + 5 && tj > j - 5 && i + 5 < m_row && j - 5 > 0) {
                     if(ThisStone == Board[ti][tj]) {
-                        ti--;
+                        ti++;
                         tj--;
                         check++;
                     }
