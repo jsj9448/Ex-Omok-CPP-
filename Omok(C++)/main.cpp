@@ -57,7 +57,7 @@ int main() {
                 cout << "흑돌의 순서입니다. 놓을 위치(x, y) : ";
             }
             cin >> x >> y;
-            if((x > 20 || y > 10) || x < 0 || y < 0) {
+            if(x > 19 || y > 10 || x < 0 || y < 0) {
                 cout << "돌을 잘못 두셨습니다. 다시 놓아주세요." << endl;
                 continue;
             }
@@ -69,11 +69,11 @@ int main() {
             myOmok.RefreshBoard(x, y);
             
             if(myOmok.WhoIsWinner() == White) {
-                cout << endl << "***** 백돌의 승리입니다! *****" << endl;
+                cout << endl << "***** 백돌(○)의 승리입니다! *****" << endl;
                 break;
             }
             if(myOmok.WhoIsWinner() == Black) {
-                cout << endl << "***** 흑돌의 승리입니다! *****" << endl;
+                cout << endl << "***** 흑돌(●)의 승리입니다! *****" << endl;
                 break;
             }
             

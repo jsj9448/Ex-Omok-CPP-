@@ -61,13 +61,15 @@ void OMOK::DrawBoard() {
                 }
                 else symbol = "┴";
             }
-            //가로좌표번호를 매기는 부분. 출력시 그림판이 홀쭉하게나와서 생략
+            //가로좌표번호를 매기는 부분. 출력시 그림판이 홀쭉하게나와서 0~9 까지만 출력
             else if(i == 10 && j >= 0) {
-                /*stringstream sstr;
-                 int temp(j - 1);
-                 sstr << temp;
-                 symbol = sstr.str();*/
-                symbol = " ";
+                stringstream sstr;
+                int temp(j - 1);
+                if(temp >= 0 && temp < 10) {
+                    sstr << temp;
+                    symbol = sstr.str();
+                }
+                else symbol = " ";
             }
             else {
                 if(j == 1 || j == 20) {

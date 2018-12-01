@@ -25,7 +25,7 @@
 
 /* Begin PBXFileReference section */
 		640D36B521B1648000BB0306 /* Omok.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Omok.cpp; sourceTree = "<group>"; };
-		640D36B621B1648000BB0306 /* Omok.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Omok.hpp; sourceTree = "<group>"; };
+		640D36B621B1648000BB0306 /* Omok.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Omok.hpp; sourceTree = "<group>"; usesTabs = 0; };
 		64E99B2E21A021030039216A /* Omok(C++) */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Omok(C++)"; sourceTree = BUILT_PRODUCTS_DIR; };
 		64E99B3121A021030039216A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,8 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				64E99B3121A021030039216A /* main.cpp */,
-				640D36B521B1648000BB0306 /* Omok.cpp */,
 				640D36B621B1648000BB0306 /* Omok.hpp */,
+				640D36B521B1648000BB0306 /* Omok.cpp */,
 			);
 			path = "Omok(C++)";
 			sourceTree = "<group>";
